@@ -1,0 +1,13 @@
+{
+  "name": "<%= name %>",
+  "version": "0.0.1",
+  "description": "<%= description %>",
+  "scripts": {
+    "start": "cross-env TS_NODE_PROJECT=\"./tsconfig.json\" webpack -- serve --open -c ./webpack-config/webpack.config.ts",
+    "build": "cross-env ENV=\"production\" TS_NODE_PROJECT=\"./tsconfig.json\" webpack -- -c ./webpack-config/webpack.config.ts",
+    "build:dev": "cross-env TS_NODE_PROJECT=\"./tsconfig.json\" webpack -- -c ./webpack-config/webpack.config.ts"
+  },
+  "keywords": [],
+  "author": "<%= author %>",
+  "license": "MIT"
+}

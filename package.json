@@ -1,0 +1,27 @@
+{
+  "name": "@tvrtkom/generator-browser-app",
+  "version": "1.0.0",
+  "description": "Generator for browser applications written in typescript with ability to choose different frameworks",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TvrtkoM/generator-browser-app"
+  },
+  "license": "MIT",
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "author": "Tvrtko Majstorovic <tvrtkomaj@gmail.com>",
+  "files": [
+    "generators"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^4.12.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.17.0",
+    "eslint-config-google": "^0.14.0"
+  }
+}

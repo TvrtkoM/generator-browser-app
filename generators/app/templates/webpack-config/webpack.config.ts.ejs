@@ -1,0 +1,131 @@
+import webpack from 'webpack';
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import PostcssPresetEnv from 'postcss-preset-env';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const production = process.env['ENV'] === 'production';
+const projectRoot = path.resolve(__dirname, '..');
+
+const config: webpack.Configuration = {
+  entry: {
+    app: path.join(projectRoot, 'src/index.ts'),
+  },
+  target: 'web',
+  devtool: production ? undefined : 'inline-source-map',
+  mode: production ? 'production' : 'development',
+  output: {
+    path: path.join(projectRoot, 'dist/'),
+    filename: '[name].bundle.js',
+    publicPath: '',
+  },
+  devServer: {
+    contentBase: path.join(projectRoot, 'src/'),
+    watchContentBase: true,
+    hot: true,
+    inline: true,
+    compress: true,
+    port: 9000,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/i,
+        use: [
+          {
+            loader: 'babel-loader'
+          },
+          {
+            loader: 'ts-loader',
+            options: {
+              configFile: path.join(projectRoot, 'tsconfig.json')
+            }
+          }
+        ],
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.js$/i,
+        use: ['babel-loader'],
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.html$/,
+        use: ['html-loader'],
+      },
+      {
+        test: /\.(svg|eot|woff|woff2|ttf|png|jpg)$/,
+        use: ['file-loader'],
+      },<% if (styleFramework === 'tailwindcss') { %>
+      {
+        test: /\.css/i,
+        use: [
+          production ? MiniCssExtractPlugin.loader : 'style-loader',
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  PostcssPresetEnv,
+                  'tailwindcss',
+                ],
+              },
+            },
+          },
+        ],
+      },<% } else if (styleFramework === 'bootstrap') { %>
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          production ? MiniCssExtractPlugin.loader : 'style-loader',
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [
+                  PostcssPresetEnv,
+                ],
+              },
+            },
+          },
+          'sass-loader',
+        ],
+      },<% } %>
+    ],
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new CssMinimizerPlugin({
+        parallel: true,
+        minimizerOptions: {
+          preset: [
+            'default',
+            {
+              discardComments: { removeAll: true },
+            },
+          ],
+        },
+      }),
+    ],
+  },
+  plugins: [
+    new MiniCssExtractPlugin(),
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template: path.join(projectRoot, 'src/index.html'),
+    }),
+  ],
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+};
+
+export default config;

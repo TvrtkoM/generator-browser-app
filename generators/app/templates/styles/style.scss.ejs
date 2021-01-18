@@ -1,0 +1,21 @@
+@import "./variables";
+<% if (styleFramework === 'bootstrap') { %>
+// Required Bootstrap components
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+// Optional Bootrap components
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/images";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/grid";
+<% } %><% if (iconLib === 'fontAwesome') { %>
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+@import "~@fortawesome/fontawesome-free/scss/regular.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~@fortawesome/fontawesome-free/scss/brands.scss";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";<% } else if (iconLib === 'bootstrap') { %>
+@import "~bootstrap-icons/font/bootstrap-icons.css";<% } %>
