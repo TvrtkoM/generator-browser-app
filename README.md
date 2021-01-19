@@ -1,4 +1,4 @@
-# Yeoman generator for basic typescript project
+# Yeoman generator for frontend projects
 
 > Includes eslint, prettier and simple tsconfig
 > Choose Bootstrap with SCSS or Tailwind CSS for styling framework
