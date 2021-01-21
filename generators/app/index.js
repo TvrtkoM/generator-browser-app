@@ -40,26 +40,31 @@ const devDeps = [
   '@types/node',
 ];
 
-const sassDevDeps = [
-  'sass',
-  'sass-loader'
-];
+const sassDevDeps = ['sass', 'sass-loader'];
 
-function deps(iconLib, styleFramework) {
-  let res;
+const reactDeps = ['react', 'react-dom', '@types/react', '@types/react-dom'];
+
+function deps(iconLib, styleFramework, uiFramework) {
+  let res = [...devDeps];
   const addBootstrap = styleFramework === 'bootstrap';
-  const addTailwind = styleFramework === 'tailwindcss'
+  const addTailwind = styleFramework === 'tailwindcss';
 
-  if (addBootstrap === true) {
-    res = [...devDeps, ...sassDevDeps, 'bootstrap@next'];
-  } else if (addTailwind === true) {
-    res = [...devDeps, 'tailwindcss@latest'];
+  if (addTailwind === true) {
+    res = [...res, 'tailwindcss@latest'];
+  } else if (addBootstrap === true) {
+    res = [...res, ...sassDevDeps, 'bootstrap@next'];
+  } else {
+    res = [...res, ...sassDevDeps];
   }
 
   if (iconLib === 'fontAwesome') {
     res = [...res, '@fortawesome/fontawesome-free'];
   } else if (iconLib === 'bootstrap') {
     res = [...res, 'bootstrap-icons'];
+  }
+
+  if (uiFramework === 'react') {
+    res = [...res, ...reactDeps];
   }
 
   return res;
@@ -86,6 +91,22 @@ module.exports = class extends Generator {
       },
       {
         type: 'list',
+        name: 'uiFramework',
+        message: 'Integrate a framework for UI scripting?',
+        choices: [
+          {
+            name: 'None',
+            value: 'none',
+          },
+          {
+            name: 'React',
+            value: 'react',
+          },
+        ],
+        default: 'none',
+      },
+      {
+        type: 'list',
         name: 'styleFramework',
         message: 'Integrate framework for styles?',
         choices: [
@@ -99,10 +120,10 @@ module.exports = class extends Generator {
           },
           {
             name: 'Tailwind CSS',
-            value: 'tailwindcss'
+            value: 'tailwindcss',
           },
         ],
-        default: 'none'
+        default: 'none',
       },
       {
         type: 'list',
@@ -139,11 +160,27 @@ module.exports = class extends Generator {
       description: this.appSettings.description,
     });
 
+    if (this.appSettings.uiFramework === 'react') {
+      this.fs.copyTpl(this.templatePath('react-app.tsx.ejs'), this.destinationPath('src/app.tsx'), {});
+    }
+
     this.fs.copy(this.templatePath('.browserslistrc'), this.destinationPath('.browserslistrc'));
-    this.fs.copy(this.templatePath('babel.config.js'), this.destinationPath('babel.config.js'));
     this.fs.copy(this.templatePath('.eslint*'), this.destinationPath());
     this.fs.copy(this.templatePath('.prettierrc.json'), this.destinationPath('.prettierrc.json'));
-    this.fs.copy(this.templatePath('tsconfig.json'), this.destinationPath('tsconfig.json'));
+
+    this.fs.copyTpl(this.templatePath('babel.config.js.ejs'), this.destinationPath('babel.config.js'), {
+      uiFramework: this.appSettings.uiFramework,
+    });
+
+    this.fs.copyTpl(this.templatePath('tsconfig.json.ejs'), this.destinationPath('tsconfig.json'), {
+      uiFramework: this.appSettings.uiFramework,
+    });
+
+    this.fs.copyTpl(this.templatePath('index.ts.ejs'), this.destinationPath('src/index.ts'), {
+      styleFramework: this.appSettings.styleFramework,
+      uiFramework: this.appSettings.uiFramework,
+    });
+
     this.fs.copyTpl(
       this.templatePath('webpack-config/webpack.config.ts.ejs'),
       this.destinationPath('webpack-config/webpack.config.ts'),
@@ -154,19 +191,20 @@ module.exports = class extends Generator {
 
     if (this.appSettings.styleFramework === 'tailwindcss') {
       this.fs.copy(this.templatePath('tailwind.config.js'), this.destinationPath('tailwind.config.js'));
-      this.fs.write(this.destinationPath('src/index.ts'), `import './styles/style.css';`);
-    } else if (this.appSettings.styleFramework === 'bootstrap') {
-      this.fs.write(this.destinationPath('src/index.ts'), `import './styles/style.scss';`);
     }
 
     if (this.appSettings.styleFramework !== 'tailwindcss') {
-      this.fs.copyTpl(this.templatePath('styles/variables.scss.ejs'), this.destinationPath('src/styles/variables.scss'), {
-        styleFramework: this.appSettings.styleFramework,
-      });
+      this.fs.copyTpl(
+        this.templatePath('styles/variables.scss.ejs'),
+        this.destinationPath('src/styles/variables.scss'),
+        {
+          styleFramework: this.appSettings.styleFramework,
+        }
+      );
 
       this.fs.copyTpl(this.templatePath('styles/style.scss.ejs'), this.destinationPath('src/styles/style.scss'), {
         iconLib: this.appSettings.iconLib,
-        styleFramework: this.appSettings.styleFramework
+        styleFramework: this.appSettings.styleFramework,
       });
     } else {
       this.fs.copyTpl(this.templatePath('styles/tailwindcss.style.css'), this.destinationPath('src/styles/style.css'), {
@@ -176,6 +214,7 @@ module.exports = class extends Generator {
 
     this.fs.copyTpl(this.templatePath('index.html'), this.destinationPath('src/index.html'), {
       appName: this.appSettings.appName,
+      uiFramework: this.appSettings.uiFramework,
     });
   }
 
@@ -187,7 +226,7 @@ module.exports = class extends Generator {
   }
 
   installDependencies() {
-    this.npmInstall(deps(this.appSettings.iconLib, this.appSettings.styleFramework), {
+    this.npmInstall(deps(this.appSettings.iconLib, this.appSettings.styleFramework, this.appSettings.uiFramework), {
       'save-dev': true,
     });
   }

@@ -1,0 +1,10 @@
+import { Component } from 'react';
+import ReactDOM from 'react-dom';
+
+class AppComponent extends Component {
+  render() {
+    return (<p>You chose to use react. Entry point is <em>./src/app.tsx</em></p>);
+  }
+}
+
+ReactDOM.render(<AppComponent />, document.getElementById('app'));

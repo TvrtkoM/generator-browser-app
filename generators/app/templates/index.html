@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title><%= appName %></title>
 </head>
-<body>
+<body><% if (uiFramework === 'react') { %>
+  <div id="app"></div><% } %>
 </body>
 </html>

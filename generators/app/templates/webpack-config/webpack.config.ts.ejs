@@ -35,7 +35,7 @@ const config: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.ts$/i,
+        test: /\.tsx?$/i,
         use: [
           {
             loader: 'babel-loader'
@@ -50,7 +50,7 @@ const config: webpack.Configuration = {
         exclude: /node_modules/,
       },
       {
-        test: /\.js$/i,
+        test: /\.jsx?$/i,
         use: ['babel-loader'],
         exclude: /node_modules/,
       },
@@ -79,7 +79,7 @@ const config: webpack.Configuration = {
             },
           },
         ],
-      },<% } else if (styleFramework === 'bootstrap') { %>
+      },<% } else { %>
       {
         test: /\.s[ac]ss$/i,
         use: [
@@ -124,7 +124,7 @@ const config: webpack.Configuration = {
     }),
   ],
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js', '.tsx', '.jsx'],
   },
 };
 
