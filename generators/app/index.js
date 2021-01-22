@@ -42,7 +42,7 @@ const devDeps = [
 
 const sassDevDeps = ['sass', 'sass-loader'];
 
-const reactDeps = ['react', 'react-dom', '@types/react', '@types/react-dom'];
+const reactDeps = ['react', 'react-dom', '@types/react', '@types/react-dom', '@babel/preset-react'];
 
 function deps(iconLib, styleFramework, uiFramework) {
   let res = [...devDeps];

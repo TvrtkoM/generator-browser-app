@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const production = process.env['ENV'] === production;
+const production = process.env['ENV'] === 'production';
 
 module.exports = function(api) {
   api.cache(false);
