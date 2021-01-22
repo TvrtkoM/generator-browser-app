@@ -29,6 +29,8 @@ const devDeps = [
   'html-webpack-plugin@5.0.0-alpha.6',
   'clean-webpack-plugin',
   'css-minimizer-webpack-plugin',
+  'terser-webpack-plugin',
+  '@types/terser-webpack-plugin',
   '@babel/core',
   '@babel/preset-env',
   '@babel/plugin-transform-runtime',
