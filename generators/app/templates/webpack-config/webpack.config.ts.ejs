@@ -101,7 +101,7 @@ const config: webpack.Configuration = {
     ],
   },
   optimization: {
-    minimize: true,
+    minimize: production ? true: false,
     minimizer: [
       new TerserPlugin({
         parallel: true,
