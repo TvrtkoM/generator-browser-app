@@ -101,6 +101,7 @@ const config: webpack.Configuration = {
     ],
   },
   optimization: {
+    runtimeChunk: 'single',
     minimize: production ? true: false,
     minimizer: [
       new TerserPlugin({
