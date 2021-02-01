@@ -34,6 +34,7 @@ const devDeps = [
   '@babel/core',
   '@babel/preset-env',
   '@babel/plugin-transform-runtime',
+  '@babel/plugin-transform-modules-commonjs',
   '@types/mini-css-extract-plugin',
   '@types/css-minimizer-webpack-plugin',
   '@types/webpack',
