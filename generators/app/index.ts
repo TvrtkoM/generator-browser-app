@@ -1,6 +1,7 @@
-const Generator = require('yeoman-generator');
+import Generator from 'yeoman-generator';
+import { DepsOptions, GenOptions } from './types';
 
-function convertToPackageName(name) {
+function convertToPackageName(name: string) {
   let n = name.toLowerCase();
   n = n.replace(/\s+/g, '-');
   return n;
@@ -47,12 +48,12 @@ const sassDevDeps = ['sass', 'sass-loader'];
 
 const reactDeps = ['react', 'react-dom', '@types/react', '@types/react-dom', '@babel/preset-react'];
 
-function deps(iconLib, styleFramework, uiFramework) {
+function deps({ iconLib, styleFramework, uiFramework }: DepsOptions) {
   let res = [...devDeps];
   const addBootstrap = styleFramework === 'bootstrap';
   const addTailwind = styleFramework === 'tailwindcss';
 
-  if (addTailwind === true) {
+  if (addTailwind) {
     res = [...res, 'tailwindcss@latest'];
   } else if (addBootstrap === true) {
     res = [...res, ...sassDevDeps, 'bootstrap@next'];
@@ -73,7 +74,8 @@ function deps(iconLib, styleFramework, uiFramework) {
   return res;
 }
 
-module.exports = class extends Generator {
+class WebAppGenerator extends Generator {
+  appSettings!: GenOptions;
   async prompting() {
     this.appSettings = await this.prompt([
       {
@@ -229,8 +231,18 @@ module.exports = class extends Generator {
   }
 
   installDependencies() {
-    this.npmInstall(deps(this.appSettings.iconLib, this.appSettings.styleFramework, this.appSettings.uiFramework), {
-      'save-dev': true,
-    });
+    const { iconLib, styleFramework, uiFramework } = this.appSettings;
+    this.npmInstall(
+      deps({
+        iconLib,
+        styleFramework,
+        uiFramework,
+      }),
+      {
+        'save-dev': true,
+      }
+    );
   }
 };
+
+export default WebAppGenerator;

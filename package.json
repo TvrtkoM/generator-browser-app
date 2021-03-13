@@ -3,7 +3,8 @@
   "version": "1.2.1",
   "description": "Generator for browser applications written in typescript with ability to choose different frameworks",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p .",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -13,14 +14,20 @@
   "keywords": [
     "yeoman-generator"
   ],
-  "author": "Tvrtko Majstorovic <tvrtkomaj@gmail.com>",
+  "author": {
+    "name": "Tvrtko Majstoroic",
+    "email": "tvrtkomaj@gmail.com"
+  },
   "files": [
-    "generators"
+    "generators/app/index.js",
+    "generators/app/templates"
   ],
   "dependencies": {
+    "typescript": "^4.2.3",
     "yeoman-generator": "^4.12.0"
   },
   "devDependencies": {
+    "@types/yeoman-generator": "^4.11.3",
     "eslint": "^7.17.0",
     "eslint-config-google": "^0.14.0"
   }
