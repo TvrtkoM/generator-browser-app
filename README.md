@@ -6,9 +6,6 @@
 
 ## Installation
 
-Set registry for `@tvrtkom` scope:
-`npm config set @tvrtkom:registry https://npm.pkg.github.com`
-
 Install with:
 `npm i -g @tvrtkom/generator-browser-app`
 
