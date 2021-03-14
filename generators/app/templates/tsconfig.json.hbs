@@ -11,8 +11,10 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,<% if (uiFramework === 'react') { %>
-    "jsx": "react-jsx",<% } %>
+    "skipLibCheck": true,
+    {{#eq uiFramework 'react'}}
+    "jsx": "react-jsx"
+    {{/eq}}
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.ts", "webpack-config/*.ts"]

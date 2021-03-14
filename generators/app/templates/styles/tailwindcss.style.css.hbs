@@ -1,9 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-<% if (iconLib === 'fontAwesome') { %>
+
+{{#eq iconLib 'fontAwesome'}}
 @import "~@fortawesome/fontawesome-free/css/regular.css";
 @import "~@fortawesome/fontawesome-free/css/solid.css";
 @import "~@fortawesome/fontawesome-free/css/brands.css";
-@import "~@fortawesome/fontawesome-free/css/fontawesome.css";<% } else if (iconLib === 'bootstrap') { %>
-@import "~bootstrap-icons/font/bootstrap-icons.css";<% } %>
+@import "~@fortawesome/fontawesome-free/css/fontawesome.css";
+{{/eq}}
+{{#eq iconLib 'bootstrap'}}
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+{{/eq}}

@@ -18,8 +18,10 @@ module.exports = function(api) {
         modules: false,
         debug: production ? false : true
       }
-    ],<% if (uiFramework === 'react') { %>
-    ['@babel/preset-react', { development: production ? false : true }],<% } %>
+    ],
+    {{#eq uiFramework 'react'}}
+    ['@babel/preset-react', { development: production ? false : true }],
+    {{/eq}}
   ];
   const plugins = [
     ["@babel/transform-runtime"],

@@ -1,0 +1,8 @@
+{{#eq styleFramework 'tailwindcss'}}
+import './styles/style.css';
+{{else}}
+import './styles/style.scss';
+{{/eq}}
+{{#eq uiFramework 'react'}}
+import './app.tsx';
+{{/eq}}

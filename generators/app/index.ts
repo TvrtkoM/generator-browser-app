@@ -1,3 +1,10 @@
+import Handlebars from 'handlebars';
+import handlebarsHelpers from 'handlebars-helpers';
+
+const handlebars = Handlebars.create();
+
+handlebarsHelpers({ handlebars });
+
 import Generator from 'yeoman-generator';
 import { DepsOptions, GenOptions } from './types';
 
@@ -21,13 +28,10 @@ const devDeps = [
   'babel-loader',
   'eslint',
   'html-loader',
-  'postcss',
   'css-loader',
   'style-loader',
-  'postcss-loader',
-  'postcss-preset-env',
   'file-loader',
-  'html-webpack-plugin@5.0.0-alpha.6',
+  'html-webpack-plugin',
   'clean-webpack-plugin',
   'css-minimizer-webpack-plugin',
   'terser-webpack-plugin',
@@ -40,12 +44,17 @@ const devDeps = [
   '@types/css-minimizer-webpack-plugin',
   '@types/webpack',
   '@types/webpack-dev-server',
-  '@types/postcss-preset-env',
   '@types/node',
 ];
 
 const sassDevDeps = ['sass', 'sass-loader'];
-
+const tailwindcssDeps = [
+  'tailwindcss@latest',
+  'postcss',
+  'postcss-loader',
+  'postcss-preset-env',
+  '@types/postcss-preset-env',
+];
 const reactDeps = ['react', 'react-dom', '@types/react', '@types/react-dom', '@babel/preset-react'];
 
 function deps({ iconLib, styleFramework, uiFramework }: DepsOptions) {
@@ -54,7 +63,7 @@ function deps({ iconLib, styleFramework, uiFramework }: DepsOptions) {
   const addTailwind = styleFramework === 'tailwindcss';
 
   if (addTailwind) {
-    res = [...res, 'tailwindcss@latest'];
+    res = [...res, ...tailwindcssDeps];
   } else if (addBootstrap === true) {
     res = [...res, ...sassDevDeps, 'bootstrap@next'];
   } else {
@@ -76,6 +85,7 @@ function deps({ iconLib, styleFramework, uiFramework }: DepsOptions) {
 
 class WebAppGenerator extends Generator {
   appSettings!: GenOptions;
+
   async prompting() {
     this.appSettings = await this.prompt([
       {
@@ -159,68 +169,38 @@ class WebAppGenerator extends Generator {
   }
 
   writeFiles() {
-    this.fs.copyTpl(this.templatePath('package.json.ejs'), this.destinationPath('package.json'), {
-      name: convertToPackageName(this.appSettings.appName),
-      author: this.appSettings.author,
-      description: this.appSettings.description,
-    });
-
-    if (this.appSettings.uiFramework === 'react') {
-      this.fs.copyTpl(this.templatePath('react-app.tsx.ejs'), this.destinationPath('src/app.tsx'), {});
-    }
+    this.appSettings.appName = convertToPackageName(this.appSettings.appName);
+    
+    this._copyHandlebarsTpl('package.json.hbs', 'package.json', this.appSettings);
 
     this.fs.copy(this.templatePath('.browserslistrc'), this.destinationPath('.browserslistrc'));
     this.fs.copy(this.templatePath('.eslint*'), this.destinationPath());
     this.fs.copy(this.templatePath('.prettierrc.json'), this.destinationPath('.prettierrc.json'));
 
-    this.fs.copyTpl(this.templatePath('babel.config.js.ejs'), this.destinationPath('babel.config.js'), {
-      uiFramework: this.appSettings.uiFramework,
-    });
+    this._copyHandlebarsTpl('babel.config.js.hbs', 'babel.config.js', this.appSettings);
+    this._copyHandlebarsTpl('tsconfig.json.hbs', 'tsconfig.json', this.appSettings);
 
-    this.fs.copyTpl(this.templatePath('tsconfig.json.ejs'), this.destinationPath('tsconfig.json'), {
-      uiFramework: this.appSettings.uiFramework,
-    });
+    if (this.appSettings.uiFramework === 'react') {
+      this.fs.copy(this.templatePath('react-app.tsx'), this.destinationPath('src/app.tsx'));
+    }
 
-    this.fs.copyTpl(this.templatePath('index.ts.ejs'), this.destinationPath('src/index.ts'), {
-      styleFramework: this.appSettings.styleFramework,
-      uiFramework: this.appSettings.uiFramework,
-    });
+    this._copyHandlebarsTpl('index.ts.hbs', 'src/index.ts', this.appSettings);
 
-    this.fs.copyTpl(
-      this.templatePath('webpack-config/webpack.config.ts.ejs'),
-      this.destinationPath('webpack-config/webpack.config.ts'),
-      {
-        styleFramework: this.appSettings.styleFramework,
-      }
+    this._copyHandlebarsTpl(
+      'webpack-config/webpack.config.ts.hbs',
+      'webpack-config/webpack.config.ts',
+      this.appSettings
     );
 
     if (this.appSettings.styleFramework === 'tailwindcss') {
       this.fs.copy(this.templatePath('tailwind.config.js'), this.destinationPath('tailwind.config.js'));
-    }
-
-    if (this.appSettings.styleFramework !== 'tailwindcss') {
-      this.fs.copyTpl(
-        this.templatePath('styles/variables.scss.ejs'),
-        this.destinationPath('src/styles/variables.scss'),
-        {
-          styleFramework: this.appSettings.styleFramework,
-        }
-      );
-
-      this.fs.copyTpl(this.templatePath('styles/style.scss.ejs'), this.destinationPath('src/styles/style.scss'), {
-        iconLib: this.appSettings.iconLib,
-        styleFramework: this.appSettings.styleFramework,
-      });
+      this._copyHandlebarsTpl('styles/tailwindcss.style.css.hbs', 'src/styles/style.css', this.appSettings)
     } else {
-      this.fs.copyTpl(this.templatePath('styles/tailwindcss.style.css'), this.destinationPath('src/styles/style.css'), {
-        iconLib: this.appSettings.iconLib,
-      });
+      this._copyHandlebarsTpl('style/varibles.scss.hbs', 'src/styles/variables.scss', this.appSettings);
+      this._copyHandlebarsTpl('styles/style.scss.hbs', 'src/styles/style.scss', this.appSettings);
     }
 
-    this.fs.copyTpl(this.templatePath('index.html'), this.destinationPath('src/index.html'), {
-      appName: this.appSettings.appName,
-      uiFramework: this.appSettings.uiFramework,
-    });
+    this._copyHandlebarsTpl('index.html.hbs', 'src/index.html', this.appSettings);
   }
 
   gitInit() {
@@ -242,6 +222,12 @@ class WebAppGenerator extends Generator {
         'save-dev': true,
       }
     );
+  }
+
+  private _copyHandlebarsTpl(tplPath: string, destPath: string, ctx: {[key: string]: any}) {
+    const tString = this.fs.read(this.templatePath(tplPath));
+    const template = handlebars.compile(tString);
+    this.fs.write(this.destinationPath(destPath), template(ctx));
   }
 };
 

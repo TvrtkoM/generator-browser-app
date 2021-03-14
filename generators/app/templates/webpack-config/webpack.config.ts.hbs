@@ -1,11 +1,13 @@
 import webpack from 'webpack';
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+{{#eq styleFramework 'tailwindcss'}}
 import PostcssPresetEnv from 'postcss-preset-env';
+{{/eq}}
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 
 import dotenv from 'dotenv';
 
@@ -63,7 +65,8 @@ const config: webpack.Configuration = {
       {
         test: /\.(svg|eot|woff|woff2|ttf|png|jpg)$/,
         use: ['file-loader'],
-      },<% if (styleFramework === 'tailwindcss') { %>
+      },
+      {{#eq styleFramework 'tailwindcss'}}
       {
         test: /\.css/i,
         use: [
@@ -81,25 +84,17 @@ const config: webpack.Configuration = {
             },
           },
         ],
-      },<% } else { %>
+      },
+      {{else}}
       {
         test: /\.s[ac]ss$/i,
         use: [
           production ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader',
-          {
-            loader: 'postcss-loader',
-            options: {
-              postcssOptions: {
-                plugins: [
-                  PostcssPresetEnv,
-                ],
-              },
-            },
-          },
           'sass-loader',
         ],
-      },<% } %>
+      },
+      {{/eq}}
     ],
   },
   optimization: {

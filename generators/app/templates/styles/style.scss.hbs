@@ -1,5 +1,6 @@
 @import "./variables";
-<% if (styleFramework === 'bootstrap') { %>
+
+{{#eq styleFramework 'bootstrap'}}
 // Required Bootstrap components
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
@@ -12,10 +13,16 @@
 @import "~bootstrap/scss/images";
 @import "~bootstrap/scss/containers";
 @import "~bootstrap/scss/grid";
-<% } %><% if (iconLib === 'fontAwesome') { %>
+{{/eq}}
+
+{{#eq iconLib 'fontAwesome'}}
 $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 @import "~@fortawesome/fontawesome-free/scss/regular.scss";
 @import "~@fortawesome/fontawesome-free/scss/solid.scss";
 @import "~@fortawesome/fontawesome-free/scss/brands.scss";
-@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";<% } else if (iconLib === 'bootstrap') { %>
-@import "~bootstrap-icons/font/bootstrap-icons.css";<% } %>
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+{{/eq}}
+
+{{#eq iconLib 'bootstrap'}}
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+{{/eq}}
