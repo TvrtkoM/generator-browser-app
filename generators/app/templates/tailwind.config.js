@@ -1,7 +1,13 @@
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const prod = process.env['ENV'] === 'production';
+
 module.exports = {
   purge: {
-    enabled: true,
-    content: ['./src/index.html'],
+    enabled: prod,
+    content: ['./src/index.html', './src/**/*.{tsx,ts}'],
   },
   darkMode: false, // or 'media' or 'class'
   theme: {

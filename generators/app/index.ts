@@ -196,7 +196,7 @@ class WebAppGenerator extends Generator {
       this.fs.copy(this.templatePath('tailwind.config.js'), this.destinationPath('tailwind.config.js'));
       this._copyHandlebarsTpl('styles/tailwindcss.style.css.hbs', 'src/styles/style.css', this.appSettings)
     } else {
-      this._copyHandlebarsTpl('style/varibles.scss.hbs', 'src/styles/variables.scss', this.appSettings);
+      this._copyHandlebarsTpl('styles/variables.scss.hbs', 'src/styles/variables.scss', this.appSettings);
       this._copyHandlebarsTpl('styles/style.scss.hbs', 'src/styles/style.scss', this.appSettings);
     }
 
