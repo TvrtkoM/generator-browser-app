@@ -1,6 +1,6 @@
 {
   "name": "@tvrtkom/generator-browser-app",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Generator for browser applications written in typescript with ability to choose different frameworks",
   "scripts": {
     "build": "tsc -p .",
